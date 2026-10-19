@@ -3,7 +3,6 @@ session_start();
 $conn = new mysqli("localhost", "root", "", "panganasa_db");
 if ($conn->connect_error) die("Koneksi gagal: " . $conn->connect_error);
 
-// Ambil data kampanye, target dana dari saprodi, dan total terkumpul dari tabel donations
 $sql = "SELECT c.*, u.nama AS nama_petani, 
         IFNULL(SUM(DISTINCT s.total_harga), 0) AS target_dana,
         IFNULL((SELECT SUM(nominal) FROM donations WHERE campaign_id = c.id), 0) AS terkumpul
@@ -22,7 +21,7 @@ $stat_lahan = $conn->query("SELECT COUNT(*) AS total FROM campaigns")->fetch_ass
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PanganAsa - Platform Permodalan Non-Tunai Pertanian Indonesia</title>
+    <title>EASATA - Easy and Sustainable Access to Agriculture</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -158,14 +157,14 @@ $stat_lahan = $conn->query("SELECT COUNT(*) AS total FROM campaigns")->fetch_ass
 </head>
 <body>
 
-    <!-- NAVBAR RESMI -->
+    <!-- NAVBAR BRAND EASATA -->
     <nav class="navbar navbar-expand-lg navbar-panganasa sticky-top py-2">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
                 <div class="brand-icon"><i class="bi bi-sprout-fill"></i></div>
                 <div class="d-flex flex-column">
-                    <span class="fw-extrabold text-dark fs-4 lh-1" style="font-weight: 800;">Pangan<span class="text-success">Asa</span></span>
-                    <small class="text-muted fw-bold" style="font-size: 9px; letter-spacing: 1px;">FINTECH AGRI CROWDFUNDING</small>
+                    <span class="fw-extrabold text-dark fs-4 lh-1" style="font-weight: 800;">EAS<span class="text-success">ATA</span></span>
+                    <small class="text-muted fw-bold" style="font-size: 8px; letter-spacing: 0.5px;">EASY & SUSTAINABLE ACCESS TO AGRICULTURE</small>
                 </div>
             </a>
 
@@ -235,7 +234,7 @@ $stat_lahan = $conn->query("SELECT COUNT(*) AS total FROM campaigns")->fetch_ass
 
                 <div class="col-lg-5 text-center d-none d-lg-block">
                     <div class="hero-img-box rounded-4 overflow-hidden border border-white border-opacity-25 shadow-lg">
-                        <img src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=600&q=80" alt="Petani PanganAsa" class="img-fluid" style="height: 320px; width: 100%; object-fit: cover;">
+                        <img src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=600&q=80" alt="Petani EASATA" class="img-fluid" style="height: 320px; width: 100%; object-fit: cover;">
                     </div>
                 </div>
             </div>
@@ -251,7 +250,6 @@ $stat_lahan = $conn->query("SELECT COUNT(*) AS total FROM campaigns")->fetch_ass
                 <p class="text-muted small mb-0">Pilih lahan garapan petani yang ingin Anda bantu musim tanam ini.</p>
             </div>
 
-            <!-- Search Bar Live -->
             <div class="col-md-7">
                 <div class="input-group shadow-sm rounded-pill overflow-hidden border">
                     <span class="input-group-text bg-white border-0 ps-3"><i class="bi bi-search text-muted"></i></span>
@@ -260,7 +258,6 @@ $stat_lahan = $conn->query("SELECT COUNT(*) AS total FROM campaigns")->fetch_ass
             </div>
         </div>
 
-        <!-- Filter Pills JS -->
         <div class="d-flex align-items-center gap-2 overflow-auto pb-3 mb-3">
             <span class="category-pill active" onclick="filterKategori('semua', this)">Semua</span>
             <span class="category-pill" onclick="filterKategori('padi & palawija', this)">Padi & Palawija</span>
@@ -268,7 +265,6 @@ $stat_lahan = $conn->query("SELECT COUNT(*) AS total FROM campaigns")->fetch_ass
             <span class="category-pill" onclick="filterKategori('jagung', this)">Jagung</span>
         </div>
 
-        <!-- GRID KARTU KAMPANYE -->
         <div class="row g-4" id="katalogGrid">
             <?php while($row = $kampanye->fetch_assoc()): 
                 $target = $row['target_dana'];
@@ -329,7 +325,81 @@ $stat_lahan = $conn->query("SELECT COUNT(*) AS total FROM campaigns")->fetch_ass
 
     </main>
 
-    <!-- SCRIPT INTERAKTIF REAL-TIME FILTER & SEARCH -->
+    <!-- TRUST SECTION -->
+    <section class="container my-5">
+        <div class="bg-white border rounded-4 p-5 shadow-sm">
+            <div class="text-center mb-5">
+                <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-2 rounded-pill mb-2">Sistem Ekosistem Tertutup</span>
+                <h4 class="fw-bold text-dark mb-1">Mengapa Permodalan EASATA Aman & Terpercaya?</h4>
+                <p class="text-muted small">Mekanisme penyaluran langsung tanpa perantara uang tunai.</p>
+            </div>
+
+            <div class="row g-4 text-center">
+                <div class="col-md-4">
+                    <div class="bg-success bg-opacity-10 text-success rounded-4 p-3 d-inline-block mb-3 fs-3">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <h6 class="fw-bold mb-2 text-dark">Penyaluran 100% Non-Tunai</h6>
+                    <p class="text-muted small mb-0">Dana terkumpul dialihkan langsung ke KUD/Supplier resmi untuk dibelikan bibit & pupuk fisik.</p>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="bg-success bg-opacity-10 text-success rounded-4 p-3 d-inline-block mb-3 fs-3">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <h6 class="fw-bold mb-2 text-dark">Tracking Logistik GPS</h6>
+                    <p class="text-muted small mb-0">Pengiriman barang dapat dipantau real-time hingga sampai ke tangan kelompok tani.</p>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="bg-success bg-opacity-10 text-success rounded-4 p-3 d-inline-block mb-3 fs-3">
+                        <i class="bi bi-file-earmark-check"></i>
+                    </div>
+                    <h6 class="fw-bold mb-2 text-dark">Dokumen BAST Digital</h6>
+                    <p class="text-muted small mb-0">Setiap penerimaan disertai foto Berita Acara Serah Terima (BAST) fisik berstempel.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER EASATA -->
+    <footer>
+        <div class="container">
+            <div class="row g-4 mb-5">
+                <div class="col-lg-5">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="brand-icon" style="width: 32px; height: 32px; font-size: 16px;">
+                            <i class="bi bi-sprout-fill"></i>
+                        </div>
+                        <span class="fw-extrabold text-white fs-4">EAS<span class="text-success">ATA</span></span>
+                    </div>
+                    <p class="small text-secondary mb-3" style="max-width: 380px;">
+                        EASATA (Easy and Sustainable Access to Agriculture) adalah platform crowdfunding permodalan pertanian berbasis in-kind pertama yang menjamin efisiensi alokasi sarana produksi bagi petani Indonesia.
+                    </p>
+                    <small class="text-muted d-block">© 2026 EASATA Indonesia. Hak Cipta Dilindungi.</small>
+                </div>
+
+                <div class="col-6 col-lg-3 ms-auto">
+                    <h6 class="fw-bold text-white mb-3 small text-uppercase">Navigasi Platform</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2">
+                        <li><a href="index.php" class="text-decoration-none text-secondary">Katalog Proyek Lahan</a></li>
+                        <li><a href="login.php" class="text-decoration-none text-secondary">Masuk Akun</a></li>
+                        <li><a href="dashboard.php" class="text-decoration-none text-secondary">Dashboard Saya</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-6 col-lg-4">
+                    <h6 class="fw-bold text-white mb-3 small text-uppercase">Sistem Keamanan</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2">
+                        <li><span class="text-secondary"><i class="bi bi-shield-lock me-2 text-success"></i>Direct Supplier Escrow</span></li>
+                        <li><span class="text-secondary"><i class="bi bi-patch-check me-2 text-success"></i>Verifikasi Lapangan KUD</span></li>
+                        <li><span class="text-secondary"><i class="bi bi-qr-code-scan me-2 text-success"></i>QRIS Payment Gateway</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let activeCategory = 'semua';

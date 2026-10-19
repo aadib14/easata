@@ -12,7 +12,6 @@ $user_id = $_SESSION['user_id'];
 $role    = $_SESSION['role'];
 $nama    = $_SESSION['nama'];
 
-// Data Khusus PETANI
 if ($role == 'petani') {
     $sql = "SELECT c.*, 
             IFNULL(SUM(DISTINCT s.total_harga), 0) AS target_dana,
@@ -23,12 +22,10 @@ if ($role == 'petani') {
             GROUP BY c.id";
     $proyek_petani = $conn->query($sql);
     
-    // Stats Petani
     $total_lahan = $proyek_petani->num_rows;
     $stat_terkumpul = $conn->query("SELECT SUM(d.nominal) AS total FROM donations d JOIN campaigns c ON d.campaign_id = c.id WHERE c.petani_id = $user_id")->fetch_assoc()['total'] ?? 0;
 } 
 
-// Data Khusus PENDANA
 if ($role == 'pendana') {
     $sql_donasi = "SELECT d.*, c.judul_proyek, c.lokasi, c.kategori 
                   FROM donations d 
@@ -48,7 +45,7 @@ if ($role == 'pendana') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard <?= ucfirst($role) ?> - PanganAsa</title>
+    <title>Dashboard <?= ucfirst($role) ?> - EASATA</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -63,11 +60,7 @@ if ($role == 'pendana') {
             --pa-border: #e2e8f0;
         }
 
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: var(--pa-gray-bg); 
-            color: #1e293b; 
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--pa-gray-bg); color: #1e293b; }
 
         .navbar-panganasa {
             background-color: #ffffff;
@@ -88,53 +81,22 @@ if ($role == 'pendana') {
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
-        .card-custom { 
-            border: 1px solid var(--pa-border); 
-            border-radius: 20px; 
-            background: #ffffff; 
-        }
-
-        .progress-custom {
-            height: 8px;
-            border-radius: 10px;
-            background-color: #f1f5f9;
-        }
-
-        .stat-widget {
-            background: #ffffff;
-            border: 1px solid var(--pa-border);
-            border-radius: 16px;
-            padding: 24px;
-            transition: all 0.2s ease;
-        }
-
-        .stat-widget:hover {
-            border-color: #cbd5e1;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.03);
-        }
-
-        .avatar-user-lg {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
+        .card-custom { border: 1px solid var(--pa-border); border-radius: 20px; background: #ffffff; }
+        .progress-custom { height: 8px; border-radius: 10px; background-color: #f1f5f9; }
+        .stat-widget { background: #ffffff; border: 1px solid var(--pa-border); border-radius: 16px; padding: 24px; }
+        .avatar-user-lg { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR RESMI PANGANASA -->
+    <!-- NAVBAR EASATA -->
     <nav class="navbar navbar-expand-lg navbar-panganasa sticky-top py-2">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
-                <div class="brand-logo-icon">
-                    <i class="bi bi-sprout-fill"></i>
-                </div>
+                <div class="brand-logo-icon"><i class="bi bi-sprout-fill"></i></div>
                 <div class="d-flex flex-column">
-                    <span class="fw-extrabold text-dark fs-4 lh-1" style="font-weight: 800;">Pangan<span class="text-success">Asa</span></span>
-                    <small class="text-muted fw-bold" style="font-size: 9px; letter-spacing: 1px;">FINTECH AGRI CROWDFUNDING</small>
+                    <span class="fw-extrabold text-dark fs-4 lh-1" style="font-weight: 800;">EAS<span class="text-success">ATA</span></span>
+                    <small class="text-muted fw-bold" style="font-size: 8px; letter-spacing: 0.5px;">EASY & SUSTAINABLE ACCESS TO AGRICULTURE</small>
                 </div>
             </a>
 
@@ -150,8 +112,6 @@ if ($role == 'pendana') {
     </nav>
 
     <main class="container my-5">
-        
-        <!-- HEADER USER CARD -->
         <div class="card-custom p-4 shadow-sm mb-4">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div class="d-flex align-items-center gap-3">
@@ -163,7 +123,7 @@ if ($role == 'pendana') {
                                 <i class="bi bi-patch-check-fill me-1"></i><?= $role ?> Terverifikasi
                             </span>
                         </div>
-                        <small class="text-muted">ID Pengguna: #PA-USER-00<?= $user_id ?> | Status Akun: Aktif & Terdaftar Lapangan</small>
+                        <small class="text-muted">ID Pengguna: #EASATA-00<?= $user_id ?> | Status Akun: Aktif & Terdaftar Lapangan</small>
                     </div>
                 </div>
 
@@ -179,10 +139,7 @@ if ($role == 'pendana') {
             </div>
         </div>
 
-        <!-- ==================== DASHBOARD KHUSUS PETANI ==================== -->
         <?php if($role == 'petani'): ?>
-            
-            <!-- Ringkasan Statistik Petani -->
             <div class="row g-3 mb-4">
                 <div class="col-md-4">
                     <div class="stat-widget shadow-sm">
@@ -213,7 +170,6 @@ if ($role == 'pendana') {
                 </div>
             </div>
 
-            <!-- Daftar Proyek Lahan Petani -->
             <h5 class="fw-bold text-dark mb-3">Lahan & Permodalan Saprodi Saya</h5>
             <div class="row g-4">
                 <?php if($proyek_petani->num_rows > 0): ?>
@@ -255,13 +211,9 @@ if ($role == 'pendana') {
                     </div>
                 <?php endif; ?>
             </div>
-
         <?php endif; ?>
 
-        <!-- ==================== DASHBOARD KHUSUS PENDANA ==================== -->
         <?php if($role == 'pendana'): ?>
-            
-            <!-- Ringkasan Statistik Pendana -->
             <div class="row g-3 mb-4">
                 <div class="col-md-4">
                     <div class="stat-widget shadow-sm">
@@ -292,7 +244,6 @@ if ($role == 'pendana') {
                 </div>
             </div>
 
-            <!-- Tabel Riwayat Portofolio Pendanaan -->
             <h5 class="fw-bold text-dark mb-3">Riwayat Portofolio Pendanaan Saya</h5>
             <div class="card-custom p-4 shadow-sm">
                 <div class="table-responsive">
@@ -331,12 +282,10 @@ if ($role == 'pendana') {
                     </table>
                 </div>
             </div>
-
         <?php endif; ?>
 
     </main>
 
-    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -48,31 +48,55 @@ $is_blocked_petani = isset($_GET['error']) && $_GET['error'] == 'petani_blocked'
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $kampanye['judul_proyek'] ?> - PanganAsa</title>
+    <title><?= $kampanye['judul_proyek'] ?> - EASATA</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
-        .card-custom { border: 1px solid #e2e8f0; border-radius: 20px; background: #ffffff; }
+        :root {
+            --pa-primary: #10b981;
+            --pa-primary-dark: #059669;
+            --pa-dark: #0f172a;
+            --pa-bg: #f8fafc;
+            --pa-border: #e2e8f0;
+        }
+
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--pa-bg); color: #1e293b; }
+        .card-custom { border: 1px solid var(--pa-border); border-radius: 20px; background: #ffffff; }
         .sticky-widget { position: sticky; top: 90px; }
         .progress-custom { height: 10px; border-radius: 10px; background-color: #f1f5f9; }
         .nav-tabs .nav-link { color: #64748b; font-weight: 600; border: none; border-bottom: 3px solid transparent; }
         .nav-tabs .nav-link.active { color: #10b981; border-bottom-color: #10b981; background: transparent; }
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
+    <!-- NAVBAR RESMI EASATA -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top py-2">
         <div class="container">
-            <a class="navbar-brand text-success fs-4 fw-extrabold" href="index.php">
-                <i class="bi bi-sprout-fill"></i> PanganAsa
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
+                <div class="brand-icon"><i class="bi bi-sprout-fill"></i></div>
+                <div class="d-flex flex-column">
+                    <span class="fw-extrabold text-dark fs-4 lh-1" style="font-weight: 800;">EAS<span class="text-success">ATA</span></span>
+                    <small class="text-muted fw-bold" style="font-size: 8px; letter-spacing: 0.5px;">EASY & SUSTAINABLE ACCESS TO AGRICULTURE</small>
+                </div>
             </a>
-            <a href="index.php" class="btn btn-outline-secondary btn-sm fw-bold rounded-pill">
-                <i class="bi bi-arrow-left"></i> Kembali ke Katalog
+            <a href="index.php" class="btn btn-outline-secondary btn-sm fw-bold rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i> Kembali ke Katalog
             </a>
         </div>
     </nav>
