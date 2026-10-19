@@ -29,6 +29,9 @@ $target_dana = $target_query->fetch_assoc()['total'] ?? 0;
 $terkumpul_query = $conn->query("SELECT SUM(nominal) AS total FROM donations WHERE campaign_id = $id");
 $terkumpul = $terkumpul_query->fetch_assoc()['total'] ?? 0;
 
+$persen = ($target_dana > 0) ? min(100, round(($terkumpul / $target_dana) * 100)) : 0;
+$is_full_funded = ($persen >= 100);
+
 $is_sukses_param = isset($_GET['status']) && $_GET['status'] == 'sukses';
 ?>
 
@@ -106,12 +109,21 @@ $is_sukses_param = isset($_GET['status']) && $_GET['status'] == 'sukses';
             background: rgba(16, 185, 129, 0.04);
             pointer-events: none;
         }
+
+        /* STYLING MEDIA PRINT FITUR 2: BUKTI CETAK PDF */
+        @media print {
+            body { background: #ffffff !important; }
+            .no-print, nav, button, .alert { display: none !important; }
+            .col-lg-7 { width: 100% !important; }
+            .card-custom { border: none !important; box-shadow: none !important; }
+            .bast-document { border: 2px solid #000 !important; }
+        }
     </style>
 </head>
 <body>
 
     <!-- NAVBAR EASATA -->
-    <nav class="navbar navbar-expand-lg navbar-panganasa sticky-top py-2">
+    <nav class="navbar navbar-expand-lg navbar-panganasa sticky-top py-2 no-print">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
                 <div class="brand-logo-icon"><i class="bi bi-sprout-fill"></i></div>
@@ -132,7 +144,7 @@ $is_sukses_param = isset($_GET['status']) && $_GET['status'] == 'sukses';
     <main class="container my-5">
         
         <?php if($is_sukses_param): ?>
-            <div class="alert alert-success border-0 shadow-sm p-4 rounded-4 mb-4 d-flex align-items-center gap-3">
+            <div class="alert alert-success border-0 shadow-sm p-4 rounded-4 mb-4 d-flex align-items-center gap-3 no-print">
                 <div class="bg-success text-white p-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
                     <i class="bi bi-check-lg fs-3"></i>
                 </div>
@@ -143,45 +155,66 @@ $is_sukses_param = isset($_GET['status']) && $_GET['status'] == 'sukses';
             </div>
         <?php endif; ?>
 
-        <div class="mb-4">
-            <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-2 rounded-pill mb-2">
-                <i class="bi bi-shield-check me-1"></i> Audit & Transparansi Direct to Supplier
-            </span>
-            <h3 class="fw-extrabold text-dark mb-1">Laporan Penyaluran & Status BAST</h3>
-            <p class="text-muted small mb-0">Proyek: <strong class="text-dark"><?= $kampanye['judul_proyek'] ?></strong> | Penerima: <strong class="text-dark"><?= $kampanye['nama_petani'] ?? 'Pak Slamet' ?></strong></p>
+        <div class="d-flex justify-content-between align-items-start mb-4 no-print flex-wrap gap-2">
+            <div>
+                <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-2 rounded-pill mb-2">
+                    <i class="bi bi-shield-check me-1"></i> Audit & Transparansi Direct to Supplier
+                </span>
+                <h3 class="fw-extrabold text-dark mb-1">Laporan Penyaluran & Status BAST</h3>
+                <p class="text-muted small mb-0">Proyek: <strong class="text-dark"><?= $kampanye['judul_proyek'] ?></strong> | Penerima: <strong class="text-dark"><?= $kampanye['nama_petani'] ?? 'Pak Slamet' ?></strong></p>
+            </div>
+
+            <!-- FITUR 2: TOMBOL CETAK BUKTI BAST -->
+            <button onclick="window.print()" class="btn btn-success fw-bold rounded-pill px-4 py-2 shadow-sm">
+                <i class="bi bi-printer-fill me-2"></i> Cetak Bukti BAST (PDF)
+            </button>
         </div>
 
         <div class="row g-4">
-            <div class="col-lg-5">
+            
+            <!-- FITUR 3: SIMULASI LOGISTIK DINAMIS BERDASARKAN PROGRES DANA -->
+            <div class="col-lg-5 no-print">
                 <div class="card-custom p-4 shadow-sm h-100">
                     <h6 class="fw-bold text-dark border-bottom pb-3 mb-4"><i class="bi bi-truck text-success me-2"></i>Lacak Alur Logistik Saprodi</h6>
 
                     <div class="stepper-item">
                         <div class="stepper-icon completed"><i class="bi bi-check-lg"></i></div>
                         <h6 class="fw-bold mb-1 text-dark">1. Permodalan Terkumpul</h6>
-                        <small class="text-muted d-block mb-1" style="font-size: 12px;">Target paket dana telah tercapai via escrow EASATA.</small>
-                        <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 11px;"><i class="bi bi-clock me-1"></i>Selesai</span>
+                        <small class="text-muted d-block mb-1" style="font-size: 12px;">Target paket dana <?= $persen ?>% tercapai via escrow EASATA.</small>
+                        <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 11px;"><i class="bi bi-check-circle-fill me-1"></i>Selesai</span>
                     </div>
 
                     <div class="stepper-item">
-                        <div class="stepper-icon completed"><i class="bi bi-check-lg"></i></div>
+                        <div class="stepper-icon <?= $is_full_funded ? 'completed' : 'active' ?>">
+                            <i class="bi <?= $is_full_funded ? 'bi-check-lg' : 'bi-arrow-repeat' ?>"></i>
+                        </div>
                         <h6 class="fw-bold mb-1 text-dark">2. PO ke Supplier & KUD Mitra</h6>
                         <small class="text-muted d-block mb-1" style="font-size: 12px;">Order resmi diterbitkan ke KUD Tani Makmur Jember.</small>
-                        <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 11px;"><i class="bi bi-clock me-1"></i>Selesai</span>
+                        <span class="badge <?= $is_full_funded ? 'bg-success bg-opacity-10 text-success' : 'bg-primary bg-opacity-10 text-primary' ?>" style="font-size: 11px;">
+                            <?= $is_full_funded ? 'Selesai' : 'Sedang Diproses' ?>
+                        </span>
                     </div>
 
                     <div class="stepper-item">
-                        <div class="stepper-icon active"><i class="bi bi-truck"></i></div>
+                        <div class="stepper-icon <?= $is_full_funded ? 'completed' : 'pending' ?>">
+                            <i class="bi <?= $is_full_funded ? 'bi-check-lg' : 'bi-truck' ?>"></i>
+                        </div>
                         <h6 class="fw-bold mb-1 text-dark">3. Pengiriman Armada Logistik</h6>
-                        <small class="text-muted d-block mb-1" style="font-size: 12px;">Pupuk NPK & Benih Padi dalam perjalanan ke lokasi lahan.</small>
-                        <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size: 11px;"><i class="bi bi-arrow-repeat me-1"></i>Sedang Berjalan</span>
+                        <small class="text-muted d-block mb-1" style="font-size: 12px;">Pupuk NPK & Benih Padi dikirim ke lokasi lahan.</small>
+                        <span class="badge <?= $is_full_funded ? 'bg-success bg-opacity-10 text-success' : 'bg-secondary bg-opacity-10 text-secondary' ?>" style="font-size: 11px;">
+                            <?= $is_full_funded ? 'Barang Tiba di Lahan' : 'Menunggu Target 100%' ?>
+                        </span>
                     </div>
 
                     <div class="stepper-item">
-                        <div class="stepper-icon pending"><i class="bi bi-geo-alt"></i></div>
+                        <div class="stepper-icon <?= $is_full_funded ? 'completed' : 'pending' ?>">
+                            <i class="bi <?= $is_full_funded ? 'bi-patch-check-fill' : 'bi-geo-alt' ?>"></i>
+                        </div>
                         <h6 class="fw-bold mb-1 text-dark">4. Serah Terima & Verifikasi BAST</h6>
                         <small class="text-muted d-block mb-1" style="font-size: 12px;">Pemeriksaan fisik barang di lokasi lahan petani garapan.</small>
-                        <span class="badge bg-secondary bg-opacity-10 text-secondary" style="font-size: 11px;">Menunggu Tiba</span>
+                        <span class="badge <?= $is_full_funded ? 'bg-success text-white' : 'bg-secondary bg-opacity-10 text-secondary' ?>" style="font-size: 11px;">
+                            <?= $is_full_funded ? 'Selesai & Diserahterimakan' : 'Menunggu Tiba' ?>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -244,8 +277,8 @@ $is_sukses_param = isset($_GET['status']) && $_GET['status'] == 'sukses';
                         </div>
                     </div>
 
-                    <h6 class="fw-bold small text-dark mb-3"><i class="bi bi-camera me-2 text-success"></i>Lampiran Foto Fisik Lapangan:</h6>
-                    <div class="row g-3">
+                    <h6 class="fw-bold small text-dark mb-3 no-print"><i class="bi bi-camera me-2 text-success"></i>Lampiran Foto Fisik Lapangan:</h6>
+                    <div class="row g-3 no-print">
                         <div class="col-sm-6">
                             <div class="border rounded-3 overflow-hidden bg-light p-1">
                                 <img src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=500&q=80" class="img-fluid rounded-2" alt="Pupuk Fisik" style="height: 140px; width: 100%; object-fit: cover;">

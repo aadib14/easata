@@ -34,13 +34,18 @@ $target_dana = $target_query->fetch_assoc()['total'] ?? 0;
 $terkumpul_query = $conn->query("SELECT SUM(nominal) AS total FROM donations WHERE campaign_id = $id");
 $terkumpul = $terkumpul_query->fetch_assoc()['total'] ?? 0;
 
-// Hitung Persentase
+// Hitung Persentase & Status Lunas
 $persen = ($target_dana > 0) ? min(100, round(($terkumpul / $target_dana) * 100)) : 0;
+$is_lunas = ($target_dana > 0 && $terkumpul >= $target_dana);
+
+// Cek Kepemilikan (Pemilik Petani)
+$is_owner = (isset($_SESSION['user_id']) && $_SESSION['role'] === 'petani' && $_SESSION['user_id'] == $kampanye['petani_id']);
 
 // Ambil Riwayat Pendana
 $donatur_list = $conn->query("SELECT * FROM donations WHERE campaign_id = $id ORDER BY id DESC");
 
 $is_blocked_petani = isset($_GET['error']) && $_GET['error'] == 'petani_blocked';
+$is_target_full    = isset($_GET['error']) && $_GET['error'] == 'target_full';
 ?>
 
 <!DOCTYPE html>
@@ -104,7 +109,6 @@ $is_blocked_petani = isset($_GET['error']) && $_GET['error'] == 'petani_blocked'
     <main class="container my-4">
         
         <?php if($is_blocked_petani): ?>
-            <!-- Alert Peringatan Jika Petani Coba Mendanai -->
             <div class="alert alert-warning border-0 shadow-sm p-3 rounded-4 mb-4 d-flex align-items-center gap-3">
                 <i class="bi bi-exclamation-triangle-fill fs-3 text-warning"></i>
                 <div>
@@ -114,12 +118,31 @@ $is_blocked_petani = isset($_GET['error']) && $_GET['error'] == 'petani_blocked'
             </div>
         <?php endif; ?>
 
+        <?php if($is_target_full): ?>
+            <div class="alert alert-success border-0 shadow-sm p-3 rounded-4 mb-4 d-flex align-items-center gap-3">
+                <i class="bi bi-check-circle-fill fs-3 text-success"></i>
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark">Target Permodalan Sudah Terpenuhi (100% Lunas)</h6>
+                    <small class="text-muted">Terima kasih atas antusiasme Anda! Proyek permodalan lahan ini sudah mengumpulkan seluruh paket saprodi yang dibutuhkan.</small>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <div class="row g-4">
             
             <!-- KOLOM KIRI: DETIL KAMPANYE -->
             <div class="col-lg-8">
                 
-                <h3 class="fw-extrabold text-dark mb-3"><?= $kampanye['judul_proyek'] ?></h3>
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <h3 class="fw-extrabold text-dark mb-0"><?= $kampanye['judul_proyek'] ?></h3>
+                    
+                    <?php if($is_owner): ?>
+                        <!-- FITUR 1: TOMBOL HAPUS KATALOG UNTUK PETANI PEMILIK -->
+                        <a href="hapus_proyek.php?id=<?= $id ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus katalog permodalan lahan ini?')" class="btn btn-outline-danger btn-sm fw-bold rounded-pill px-3 text-nowrap">
+                            <i class="bi bi-trash me-1"></i> Hapus Katalog
+                        </a>
+                    <?php endif; ?>
+                </div>
 
                 <div class="card-custom overflow-hidden mb-4 shadow-sm">
                     <img src="https://images.unsplash.com/photo-1595841696677-6489ff3f8cd1?auto=format&fit=crop&w=1000&q=80" alt="Lahan Garapan" class="img-fluid w-100" style="max-height: 400px; object-fit: cover;">
@@ -227,7 +250,7 @@ $is_blocked_petani = isset($_GET['error']) && $_GET['error'] == 'petani_blocked'
 
             </div>
 
-            <!-- KOLOM KANAN: WIDGET ACTION SESUAI ROLE -->
+            <!-- KOLOM KANAN: WIDGET ACTION SESUAI ROLE & STATUS DANA -->
             <div class="col-lg-4">
                 <div class="card-custom p-4 shadow-sm sticky-widget">
                     
@@ -254,8 +277,18 @@ $is_blocked_petani = isset($_GET['error']) && $_GET['error'] == 'petani_blocked'
                         </div>
                     </div>
 
-                    <!-- KONDISI TOMBOL BERDASARKAN ROLE -->
-                    <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'petani'): ?>
+                    <!-- KONDISI BUG FIX 4: JIKA LUNAS ATAU MODE PETANI -->
+                    <?php if($is_lunas): ?>
+                        
+                        <div class="bg-success bg-opacity-10 p-3 rounded-3 border border-success border-opacity-25 text-center mb-3">
+                            <span class="fw-bold text-success small d-block mb-1"><i class="bi bi-check-circle-fill me-1"></i> Target Dana Terpenuhi!</span>
+                            <small class="text-muted d-block" style="font-size: 11px;">Seluruh kuota permodalan lahan ini sudah lunas 100%.</small>
+                        </div>
+                        <button class="btn btn-secondary btn-lg w-100 fw-bold rounded-pill py-3 mb-3" disabled>
+                            <i class="bi bi-lock-fill me-2"></i> Pendanaan Ditutup (Lunas)
+                        </button>
+
+                    <?php elseif(isset($_SESSION['role']) && $_SESSION['role'] === 'petani'): ?>
                         
                         <div class="bg-light p-3 rounded-3 border text-center mb-3">
                             <small class="text-muted d-block mb-1"><i class="bi bi-info-circle text-primary me-1"></i> Mode Akun Petani</small>

@@ -38,6 +38,8 @@ if ($role == 'pendana') {
     
     $total_proyek_dibantu = $conn->query("SELECT COUNT(DISTINCT campaign_id) AS total FROM donations")->fetch_assoc()['total'] ?? 0;
 }
+
+$is_deleted_msg = isset($_GET['status']) && $_GET['status'] == 'deleted';
 ?>
 
 <!DOCTYPE html>
@@ -112,6 +114,17 @@ if ($role == 'pendana') {
     </nav>
 
     <main class="container my-5">
+        
+        <?php if($is_deleted_msg): ?>
+            <div class="alert alert-success border-0 shadow-sm p-3 rounded-4 mb-4 d-flex align-items-center gap-3">
+                <i class="bi bi-trash-fill fs-3 text-success"></i>
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark">Katalog Berhasil Dihapus</h6>
+                    <small class="text-muted">Proyek pengajuan permodalan Anda telah dihapus dari katalog publik.</small>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <div class="card-custom p-4 shadow-sm mb-4">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <div class="d-flex align-items-center gap-3">
@@ -196,9 +209,15 @@ if ($role == 'pendana') {
                                     <div class="progress-bar bg-success" style="width: <?= $persen ?>%"></div>
                                 </div>
 
-                                <a href="transparansi.php?id=<?= $p['id'] ?>" class="btn btn-outline-success btn-sm w-100 fw-bold rounded-pill py-2">
-                                    <i class="bi bi-truck me-1"></i> Pantau Status Logistik & BAST
-                                </a>
+                                <div class="d-flex gap-2">
+                                    <a href="transparansi.php?id=<?= $p['id'] ?>" class="btn btn-outline-success btn-sm w-100 fw-bold rounded-pill py-2">
+                                        <i class="bi bi-truck me-1"></i> Pantau Logistik
+                                    </a>
+                                    <!-- FITUR 1: TOMBOL HAPUS DI DASHBOARD PETANI -->
+                                    <a href="hapus_proyek.php?id=<?= $p['id'] ?>" onclick="return confirm('Yakin ingin menghapus katalog ini?')" class="btn btn-outline-danger btn-sm fw-bold rounded-pill px-3 py-2">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>

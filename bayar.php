@@ -41,18 +41,27 @@ $terkumpul = $terkumpul_q->fetch_assoc()['total'] ?? 0;
 
 $sisa_kebutuhan = max(0, $target_dana - $terkumpul);
 
+// PROTEKSI BUG 4: JIKA TARGET DANA SUDAH TERKUMPUL PENUH (LUNAS), BLOKIR PEMBAYARAN
+if ($target_dana > 0 && $terkumpul >= $target_dana) {
+    header("Location: detail.php?id=" . $campaign_id . "&error=target_full");
+    exit;
+}
+
 // PROSES SIMULASI PEMBAYARAN
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nominal = (int)$_POST['nominal'];
     $nama_donatur = $_SESSION['nama'];
     
-    if ($nominal >= 10000) {
+    // Cegah nominal melebihi sisa kebutuhan atau di bawah minimum
+    if ($nominal >= 10000 && $nominal <= $sisa_kebutuhan) {
         $sql_donasi = "INSERT INTO donations (campaign_id, nama_donatur, nominal, tanggal) 
                         VALUES ($campaign_id, '$nama_donatur', $nominal, NOW())";
         if ($conn->query($sql_donasi)) {
             header("Location: transparansi.php?id=" . $campaign_id . "&status=sukses");
             exit;
         }
+    } else if ($nominal > $sisa_kebutuhan) {
+        $error_msg = "Nominal melebihi sisa kebutuhan permodalan (Maksimal: Rp " . number_format($sisa_kebutuhan, 0, ',', '.') . ")";
     }
 }
 ?>
@@ -121,7 +130,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <i class="bi bi-shield-check me-1"></i> Penyaluran Modal Khusus Pendana
             </span>
             <h4 class="fw-extrabold text-dark mb-1">Konfirmasi Permodalan Saprodi</h4>
-            <p class="text-muted small mb-4">Lahan: <strong><?= $kampanye['judul_proyek'] ?></strong></p>
+            <p class="text-muted small mb-3">Lahan: <strong><?= $kampanye['judul_proyek'] ?></strong></p>
+
+            <div class="bg-light p-3 rounded-3 border mb-4 d-flex justify-content-between align-items-center">
+                <span class="small text-muted font-monospace">Sisa Kebutuhan Modal:</span>
+                <span class="fw-extrabold text-success fs-5">Rp <?= number_format($sisa_kebutuhan, 0, ',', '.') ?></span>
+            </div>
+
+            <?php if(isset($error_msg)): ?>
+                <div class="alert alert-danger small py-2 px-3 rounded-3 mb-3"><?= $error_msg ?></div>
+            <?php endif; ?>
 
             <form action="" method="POST" id="formBayar">
                 
@@ -138,13 +156,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <button type="button" class="btn btn-preset w-100" onclick="setNominal(250000, this)">Rp 250.000</button>
                     </div>
                     <div class="col-6">
-                        <button type="button" class="btn btn-preset w-100" onclick="setNominal(500000, this)">Rp 500.000</button>
+                        <button type="button" class="btn btn-preset w-100" onclick="setNominal(<?= $sisa_kebutuhan ?>, this)">Lunasi Sisa</button>
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <label class="form-label fw-bold small text-dark">Atau Masukkan Nominal Lain (Rp):</label>
-                    <input type="number" name="nominal" id="inputNominal" class="form-control form-control-lg fw-bold text-success" value="100000" min="10000" required>
+                    <input type="number" name="nominal" id="inputNominal" class="form-control form-control-lg fw-bold text-success" value="<?= min(100000, $sisa_kebutuhan) ?>" min="10000" max="<?= $sisa_kebutuhan ?>" required>
                     <small class="text-muted" style="font-size: 11px;">Minimal penyaluran modal Rp 10.000</small>
                 </div>
 
