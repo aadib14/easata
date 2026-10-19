@@ -38,23 +38,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {$petani_id    = $_SESSION['user_id'];
         $new_campaign_id =$conn->insert_id;
 
         // 2. Simpan rincian barang saprodi fisik
-        if (isset($_POST['nama_barang'])) {
-            if (is_array($_POST['nama_barang'])) {
-                $nama_barang =$_POST['nama_barang'];
-                $jumlah      =$_POST['jumlah'];
-                $satuan      =$_POST['satuan'];
-                $harga       =$_POST['harga_satuan'];
+        if (isset($_POST['nama_barang']) && is_array($_POST['nama_barang'])) {
+            $nama_barang =$_POST['nama_barang'];
+            $jumlah      =$_POST['jumlah'];
+            $satuan      =$_POST['satuan'];
+            $harga       =$_POST['harga_satuan'];
 
-                for ($i = 0; $i < count($nama_barang); $i++) {$item_nama   = $conn->real_escape_string($nama_barang[$i]);$item_qty    = (int)$jumlah[$i];
-                    $item_satuan =$conn->real_escape_string($satuan[$i]);
-                    $item_harga  = (int)$harga[$i];$total_harga = $item_qty * $item_harga;
+            for ($i = 0; $i < count($nama_barang); $i++) {$item_nama   = $conn->real_escape_string($nama_barang[$i]);$item_qty    = (int)$jumlah[$i];
+                $item_satuan =$conn->real_escape_string($satuan[$i]);
+                $item_harga  = (int)$harga[$i];$total_harga = $item_qty * $item_harga;
 
-                    if (!empty($item_nama)) {
-                        if ($total_harga > 0) {$sql_saprodi = "INSERT INTO saprodi (campaign_id, nama_barang, jumlah, satuan, harga_satuan, total_harga) 
-                                            VALUES ($new_campaign_id, '$item_nama', $item_qty, '$item_satuan', $item_harga,$total_harga)";
-                            $conn->query($sql_saprodi);
-                        }
-                    }
+                if (!empty($item_nama) && $total_harga > 0) {$sql_saprodi = "INSERT INTO saprodi (campaign_id, nama_barang, jumlah, satuan, harga_satuan, total_harga) 
+                                    VALUES ($new_campaign_id, '$item_nama', $item_qty, '$item_satuan', $item_harga,$total_harga)";
+                    $conn->query($sql_saprodi);
                 }
             }
         }
@@ -72,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {$petani_id    = $_SESSION['user_id'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengajuan Permodalan Lahan Baru - PanganAsa</title>
+    <title>Pengajuan Permodalan Lahan Baru - EASATA</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -126,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {$petani_id    = $_SESSION['user_id'];
 </head>
 <body>
 
-    <!-- NAVBAR RESMI -->
+    <!-- NAVBAR RESMI EASATA -->
     <nav class="navbar navbar-expand-lg navbar-panganasa sticky-top py-2">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
@@ -134,8 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {$petani_id    = $_SESSION['user_id'];
                     <i class="bi bi-sprout-fill"></i>
                 </div>
                 <div class="d-flex flex-column">
-                    <span class="fw-extrabold text-dark fs-4 lh-1" style="font-weight: 800;">Pangan<span class="text-success">Asa</span></span>
-                    <small class="text-muted fw-bold" style="font-size: 9px; letter-spacing: 1px;">FINTECH AGRI CROWDFUNDING</small>
+                    <span class="fw-extrabold text-dark fs-4 lh-1" style="font-weight: 800;">EAS<span class="text-success">ATA</span></span>
+                    <small class="text-muted fw-bold" style="font-size: 8px; letter-spacing: 0.5px;">EASY & SUSTAINABLE ACCESS TO AGRICULTURE</small>
                 </div>
             </a>
 
@@ -151,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {$petani_id    = $_SESSION['user_id'];
         
         <div class="mb-4">
             <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-2 rounded-pill mb-2">
-                <i class="bi bi-patch-check-fill me-1"></i> Portal Mitra Petani Terverifikasi
+                <i class="bi bi-patch-check-fill me-1"></i> Portal Mitra Petani Terverifikasi EASATA
             </span>
             <h3 class="fw-extrabold text-dark mb-1">Formulir Pengajuan Permodalan Saprodi</h3>
             <p class="text-muted small mb-0">Isi rincian kebutuhan pupuk, benih, dan sarana produksi fisik untuk musim tanam mendatang.</p>
