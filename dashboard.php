@@ -52,6 +52,9 @@ $is_deleted_msg = isset($_GET['status']) && $_GET['status'] == 'deleted';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- SWEETALERT2 POPUP MODERN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
@@ -213,10 +216,10 @@ $is_deleted_msg = isset($_GET['status']) && $_GET['status'] == 'deleted';
                                     <a href="transparansi.php?id=<?= $p['id'] ?>" class="btn btn-outline-success btn-sm w-100 fw-bold rounded-pill py-2">
                                         <i class="bi bi-truck me-1"></i> Pantau Logistik
                                     </a>
-                                    <!-- FITUR 1: TOMBOL HAPUS DI DASHBOARD PETANI -->
-                                    <a href="hapus_proyek.php?id=<?= $p['id'] ?>" onclick="return confirm('Yakin ingin menghapus katalog ini?')" class="btn btn-outline-danger btn-sm fw-bold rounded-pill px-3 py-2">
+                                    <!-- POPUP HAPUS DENGAN SWEETALERT2 -->
+                                    <button type="button" onclick="konfirmasiHapus(<?= $p['id'] ?>)" class="btn btn-outline-danger btn-sm fw-bold rounded-pill px-3 py-2">
                                         <i class="bi bi-trash"></i>
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -272,7 +275,7 @@ $is_deleted_msg = isset($_GET['status']) && $_GET['status'] == 'deleted';
                                 <th>Proyek Lahan Tanam</th>
                                 <th>Tanggal Transaksi</th>
                                 <th>Nominal Disalurkan</th>
-                                <th class="text-end">Dokumen Audit</th>
+                                <th class="text-end">Dokumen Benefit Pendana</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -286,9 +289,14 @@ $is_deleted_msg = isset($_GET['status']) && $_GET['status'] == 'deleted';
                                     <td class="small text-muted"><?= date('d M Y, H:i', strtotime($d['tanggal'])) ?> WIB</td>
                                     <td class="fw-extrabold text-success">Rp <?= number_format($d['nominal'], 0, ',', '.') ?></td>
                                     <td class="text-end">
-                                        <a href="transparansi.php?id=<?= $d['campaign_id'] ?>" class="btn btn-outline-success btn-sm rounded-pill px-3 fw-semibold">
-                                            <i class="bi bi-file-earmark-check me-1"></i> Resi & BAST
-                                        </a>
+                                        <div class="btn-group">
+                                            <a href="sertifikat.php?id=<?= $d['campaign_id'] ?>" class="btn btn-success btn-sm rounded-pill px-3 fw-semibold me-1">
+                                                <i class="bi bi-award me-1"></i> Sertifikat
+                                            </a>
+                                            <a href="transparansi.php?id=<?= $d['campaign_id'] ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-semibold">
+                                                <i class="bi bi-file-earmark-check me-1"></i> BAST
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                                 <?php endwhile; ?>
@@ -306,5 +314,31 @@ $is_deleted_msg = isset($_GET['status']) && $_GET['status'] == 'deleted';
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SCRIPT KONFIRMASI SWEETALERT2 -->
+    <script>
+        function konfirmasiHapus(id) {
+            Swal.fire({
+                title: 'Hapus Katalog Lahan?',
+                text: "Katalog permodalan ini akan dihapus dari sistem EASATA.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Hapus Katalog',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-4 border-0 shadow-lg',
+                    confirmButton: 'btn btn-danger fw-bold rounded-pill px-4 me-2',
+                    cancelButton: 'btn btn-light fw-bold rounded-pill px-4 border'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'hapus_proyek.php?id=' + id;
+                }
+            });
+        }
+    </script>
 </body>
 </html>
