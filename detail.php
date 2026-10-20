@@ -137,7 +137,6 @@ $is_target_full    = isset($_GET['error']) && $_GET['error'] == 'target_full';
                     <h3 class="fw-extrabold text-dark mb-0"><?= $kampanye['judul_proyek'] ?></h3>
                     
                     <?php if($is_owner): ?>
-                        <!-- FITUR 1: TOMBOL HAPUS KATALOG UNTUK PETANI PEMILIK -->
                         <a href="hapus_proyek.php?id=<?= $id ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus katalog permodalan lahan ini?')" class="btn btn-outline-danger btn-sm fw-bold rounded-pill px-3 text-nowrap">
                             <i class="bi bi-trash me-1"></i> Hapus Katalog
                         </a>
@@ -172,6 +171,9 @@ $is_target_full    = isset($_GET['error']) && $_GET['error'] == 'target_full';
                             <button class="nav-link active" id="saprodi-tab" data-bs-toggle="tab" data-bs-target="#saprodi" type="button"><i class="bi bi-box-seam me-2"></i>Paket Saprodi Fisik</button>
                         </li>
                         <li class="nav-item">
+                            <button class="nav-link" id="manfaat-tab" data-bs-toggle="tab" data-bs-target="#manfaat" type="button"><i class="bi bi-gift me-2"></i>Manfaat Pendana</button>
+                        </li>
+                        <li class="nav-item">
                             <button class="nav-link" id="cerita-tab" data-bs-toggle="tab" data-bs-target="#cerita" type="button"><i class="bi bi-journal-text me-2"></i>Cerita Lahan</button>
                         </li>
                         <li class="nav-item">
@@ -181,6 +183,7 @@ $is_target_full    = isset($_GET['error']) && $_GET['error'] == 'target_full';
 
                     <div class="tab-content" id="detailTabContent">
                         
+                        <!-- TAB 1: SAPRODI -->
                         <div class="tab-pane fade show active" id="saprodi" role="tabpanel">
                             <div class="alert alert-success bg-success bg-opacity-10 border-0 text-success small mb-3">
                                 <i class="bi bi-info-circle-fill me-1"></i> Dana yang terkumpul akan langsung dikonversi menjadi item barang berikut dan dikirim oleh KUD Mitra ke lokasi lahan.
@@ -218,10 +221,51 @@ $is_target_full    = isset($_GET['error']) && $_GET['error'] == 'target_full';
                             </div>
                         </div>
 
+                        <!-- TAB 2: MANFAAT PENDANA -->
+                        <div class="tab-pane fade" id="manfaat" role="tabpanel">
+                            <h6 class="fw-bold text-dark mb-3"><i class="bi bi-award-fill text-success me-2"></i>Hak & Benefit Yang Diterima Pendana:</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="p-3 border rounded-3 bg-light">
+                                        <div class="d-flex align-items-center gap-2 mb-2 text-success fw-bold">
+                                            <i class="bi bi-file-earmark-pdf fs-5"></i> Sertifikat Pendana Digital
+                                        </div>
+                                        <p class="small text-muted mb-0">Pendana secara otomatis menerbitkan Sertifikat Resmi bertanda tangan digital dan berstempel EASATA sebagai bukti partisipasi aktif.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 border rounded-3 bg-light">
+                                        <div class="d-flex align-items-center gap-2 mb-2 text-primary fw-bold">
+                                            <i class="bi bi-geo-alt-fill fs-5"></i> Audit Laporan BAST GPS
+                                        </div>
+                                        <p class="small text-muted mb-0">Pendana mendapatkan laporan transparansi logistik real-time beserta foto serah terima barang berkoordinat GPS di lokasi lahan.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 border rounded-3 bg-light">
+                                        <div class="d-flex align-items-center gap-2 mb-2 text-warning fw-bold">
+                                            <i class="bi bi-basket-fill fs-5"></i> Hak Pembelian Hasil Panen Pertama
+                                        </div>
+                                        <p class="small text-muted mb-0">Prioritas membeli hasil panen (beras/sayur organik) langsung dari lahan petani dengan harga khusus mitra tanpa perantara.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 border rounded-3 bg-light">
+                                        <div class="d-flex align-items-center gap-2 mb-2 text-success fw-bold">
+                                            <i class="bi bi-heart-pulse-fill fs-5"></i> Metrik Dampak Sosial
+                                        </div>
+                                        <p class="small text-muted mb-0">Menjamin 100% modal tidak konsumtif, langsung menjadi pupuk/benih fisik yang meningkatkan produktivitas petani lokal.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 3: CERITA LAHAN -->
                         <div class="tab-pane fade" id="cerita" role="tabpanel">
                             <p class="lh-lg text-muted"><?= nl2br($kampanye['deskripsi'] ?? 'Lahan pertanian ini membutuhkan permodalan sarana produksi fisik berupa pupuk dan benih terverifikasi untuk mempersiapkan musim tanam baru.') ?></p>
                         </div>
 
+                        <!-- TAB 4: PENDANA -->
                         <div class="tab-pane fade" id="donatur" role="tabpanel">
                             <ul class="list-group list-group-flush">
                                 <?php if($donatur_list->num_rows > 0): ?>
@@ -250,7 +294,7 @@ $is_target_full    = isset($_GET['error']) && $_GET['error'] == 'target_full';
 
             </div>
 
-            <!-- KOLOM KANAN: WIDGET ACTION SESUAI ROLE & STATUS DANA -->
+            <!-- KOLOM KANAN: WIDGET ACTION SESUAI ROLE -->
             <div class="col-lg-4">
                 <div class="card-custom p-4 shadow-sm sticky-widget">
                     
@@ -266,6 +310,16 @@ $is_target_full    = isset($_GET['error']) && $_GET['error'] == 'target_full';
                         <div class="progress-bar bg-success" style="width: <?= $persen ?>%"></div>
                     </div>
 
+                    <!-- RINGKASAN MANFAAT PENDANA RINGKAS -->
+                    <div class="bg-light p-3 rounded-3 border mb-4" style="font-size: 12px;">
+                        <span class="fw-bold text-dark d-block mb-2"><i class="bi bi-gift-fill text-success me-1"></i> Apa Yang Didapat Pendana?</span>
+                        <ul class="list-unstyled mb-0 d-flex flex-column gap-1 text-muted">
+                            <li><i class="bi bi-check2 text-success me-1"></i> Sertifikat Kontribusi Digital</li>
+                            <li><i class="bi bi-check2 text-success me-1"></i> Bukti Laporan BAST Ber-GPS</li>
+                            <li><i class="bi bi-check2 text-success me-1"></i> Hak Prioritas Beli Hasil Panen</li>
+                        </ul>
+                    </div>
+
                     <div class="d-flex justify-content-between border-bottom pb-3 mb-4 text-center">
                         <div>
                             <small class="text-muted d-block" style="font-size: 11px;">Sisa Hari</small>
@@ -277,9 +331,7 @@ $is_target_full    = isset($_GET['error']) && $_GET['error'] == 'target_full';
                         </div>
                     </div>
 
-                    <!-- KONDISI BUG FIX 4: JIKA LUNAS ATAU MODE PETANI -->
                     <?php if($is_lunas): ?>
-                        
                         <div class="bg-success bg-opacity-10 p-3 rounded-3 border border-success border-opacity-25 text-center mb-3">
                             <span class="fw-bold text-success small d-block mb-1"><i class="bi bi-check-circle-fill me-1"></i> Target Dana Terpenuhi!</span>
                             <small class="text-muted d-block" style="font-size: 11px;">Seluruh kuota permodalan lahan ini sudah lunas 100%.</small>
@@ -287,9 +339,7 @@ $is_target_full    = isset($_GET['error']) && $_GET['error'] == 'target_full';
                         <button class="btn btn-secondary btn-lg w-100 fw-bold rounded-pill py-3 mb-3" disabled>
                             <i class="bi bi-lock-fill me-2"></i> Pendanaan Ditutup (Lunas)
                         </button>
-
                     <?php elseif(isset($_SESSION['role']) && $_SESSION['role'] === 'petani'): ?>
-                        
                         <div class="bg-light p-3 rounded-3 border text-center mb-3">
                             <small class="text-muted d-block mb-1"><i class="bi bi-info-circle text-primary me-1"></i> Mode Akun Petani</small>
                             <span class="fw-bold text-dark small">Hanya akun Pendana yang dapat menyalurkan modal.</span>
@@ -297,13 +347,10 @@ $is_target_full    = isset($_GET['error']) && $_GET['error'] == 'target_full';
                         <button class="btn btn-secondary btn-lg w-100 fw-bold rounded-pill py-3 mb-3" disabled>
                             <i class="bi bi-lock-fill me-2"></i> Pendanaan Dikunci
                         </button>
-
                     <?php else: ?>
-
                         <a href="bayar.php?id=<?= $id ?>" class="btn btn-success btn-lg w-100 fw-bold rounded-pill py-3 shadow-sm mb-3">
                             <i class="bi bi-wallet2 me-2"></i> Danai Lahan Ini
                         </a>
-
                     <?php endif; ?>
 
                     <a href="transparansi.php?id=<?= $id ?>" class="btn btn-outline-secondary w-100 fw-bold rounded-pill py-2 border">
