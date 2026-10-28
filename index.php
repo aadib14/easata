@@ -204,7 +204,7 @@ $stat_lahan = $conn->query("SELECT COUNT(*) AS total FROM campaigns")->fetch_ass
                 <div class="col-lg-7">
                     <div class="hero-badge">
                         <i class="bi bi-shield-check text-warning"></i>
-                        <span>Platform Non-Tunai (In-Kind) Pertama di Indonesia</span>
+                        <span>Platform Non-Tunai (In-Kind) di Indonesia</span>
                     </div>
 
                     <h1 class="hero-title">Permodalan Lahan Tepat Sasaran, Langsung Berupa Pupuk & Benih.</h1>
@@ -374,7 +374,7 @@ $stat_lahan = $conn->query("SELECT COUNT(*) AS total FROM campaigns")->fetch_ass
                         <span class="fw-extrabold text-white fs-4">EAS<span class="text-success">ATA</span></span>
                     </div>
                     <p class="small text-secondary mb-3" style="max-width: 380px;">
-                        EASATA (Easy and Sustainable Access to Agriculture) adalah platform crowdfunding permodalan pertanian berbasis in-kind pertama yang menjamin efisiensi alokasi sarana produksi bagi petani Indonesia.
+                        EASATA (Easy and Sustainable Access to Agriculture) adalah platform crowdfunding permodalan pertanian berbasis in-kind yang menjamin efisiensi alokasi sarana produksi bagi petani Indonesia.
                     </p>
                     <small class="text-muted d-block">© 2026 EASATA Indonesia. Hak Cipta Dilindungi.</small>
                 </div>
